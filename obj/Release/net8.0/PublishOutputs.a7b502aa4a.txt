@@ -1,0 +1,7 @@
+/home/nehyan/Desktop/new-app/bin/Release/net8.0/publish/new-app
+/home/nehyan/Desktop/new-app/bin/Release/net8.0/publish/appsettings.Development.json
+/home/nehyan/Desktop/new-app/bin/Release/net8.0/publish/appsettings.json
+/home/nehyan/Desktop/new-app/bin/Release/net8.0/publish/new-app.dll
+/home/nehyan/Desktop/new-app/bin/Release/net8.0/publish/new-app.deps.json
+/home/nehyan/Desktop/new-app/bin/Release/net8.0/publish/new-app.runtimeconfig.json
+/home/nehyan/Desktop/new-app/bin/Release/net8.0/publish/new-app.pdb
