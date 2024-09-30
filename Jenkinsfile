@@ -51,17 +51,17 @@ pipeline {
             steps {
                 script {
                     if (env.BRANCH_NAME == 'branch1') {
-                        // Use SSH credentials for deployment to the remote IIS server
+                        // Use PowerShell to deploy using username and password
                         withCredentials([usernamePassword(credentialsId: 'remote-server-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                             try {
-                                // Copy files to the remote server
-                                sh '''
-                                    sshpass -p $PASSWORD scp -o StrictHostKeyChecking=no -r ./publish/client1/* $USERNAME@192.168.5.25:C:/CICDTest1
-                                '''
-                                // Restart the application pool
-                                sh '''
-                                    sshpass -p $PASSWORD ssh -o StrictHostKeyChecking=no $USERNAME@192.168.5.25 "powershell -Command 'Restart-WebAppPool -Name CICDTest1"
-                                '''
+                                // Copy files to the remote server using PowerShell
+                                bat """
+                                    powershell -Command " 
+                                        $session = New-PSSession -HostName '192.168.5.25' -UserName '$USERNAME' -Password '$PASSWORD'; 
+                                        Copy-Item -Path './publish/client1/*' -Destination 'C:/CICDTest1' -ToSession $session; 
+                                        Invoke-Command -Session $session -ScriptBlock { Restart-WebAppPool -Name 'CICDTest1' }; 
+                                        Remove-PSSession $session"
+                                """
                             } catch (Exception e) {
                                 // Handle errors
                                 echo "Deployment failed: ${e.message}"
