@@ -60,7 +60,7 @@ pipeline {
                                 '''
                                 // Restart the application pool
                                 sh '''
-                                    sshpass -p $PASSWORD ssh -o StrictHostKeyChecking=no $USERNAME@192.168.5.25 "powershell -Command 'Restart-WebAppPool -Name ''CICDTest1'''"
+                                    sshpass -p $PASSWORD ssh -o StrictHostKeyChecking=no $USERNAME@192.168.5.25 "powershell -Command 'Restart-WebAppPool -Name CICDTest1"
                                 '''
                             } catch (Exception e) {
                                 // Handle errors
