@@ -50,12 +50,33 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Restart the service based on the branch name
                     if (env.BRANCH_NAME == 'branch1') {
-                        sh 'sudo systemctl restart client1-app'
-                    } else if (env.BRANCH_NAME == 'branch2') {
+    // Deploy to the remote IIS server for branch1
+    withCredentials([sshUserPrivateKey(credentialsId: 'e42c2480-89f9-4e15-a966-21bcc8ab478e', keyFileVariable: 'SSH_KEY')]) {
+        
+        try {
+            // Copy files to the remote server
+            sh '''
+                scp -i $SSH_KEY -r ./publish/client1/* admin@192.168.5.25:C:/CICDTest1
+            '''
+            // Restart the application pool
+            sh '''
+                ssh -i $SSH_KEY admin@192.168.5.25 << EOF
+                    powershell -Command "Restart-WebAppPool -Name 'CICDTest1'"
+                EOF
+            '''
+        } catch (Exception e) {
+            // Handle errors
+            echo "Deployment failed: ${e.message}"
+            currentBuild.result = 'FAILURE'
+        }
+    }
+}
+ else if (env.BRANCH_NAME == 'branch2') {
+                        // Local Nginx server deployment for branch2
                         sh 'sudo systemctl restart client2-app'
                     } else if (env.BRANCH_NAME == 'branch3') {
+                        // Local Nginx server deployment for branch3
                         sh 'sudo systemctl restart client3-app'
                     }
                 }
