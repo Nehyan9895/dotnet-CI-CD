@@ -37,7 +37,7 @@ pipeline {
                 script {
                     // Publish based on the branch name
                     if (env.BRANCH_NAME == 'branch1') {
-                        sh 'dotnet publish --configuration Release -o ./publish/client1'
+                        sh 'dotnet publish --configuration Release --runtime win-x64 --self-contained true -o ./publish/client1'
                     } else if (env.BRANCH_NAME == 'branch2') {
                         sh 'dotnet publish --configuration Release -o ./publish/client2'
                     } else if (env.BRANCH_NAME == 'branch3') {
