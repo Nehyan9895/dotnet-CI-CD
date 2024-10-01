@@ -37,7 +37,7 @@ pipeline {
                 script {
                     // Publish based on the branch name
                     if (env.BRANCH_NAME == 'branch1') {
-                        sh 'dotnet publish --configuration Release -o ./publish/client1'
+                        sh 'dotnet publish  --configuration Release -o ./publish/client1'
                     } else if (env.BRANCH_NAME == 'branch2') {
                         sh 'dotnet publish --configuration Release -o ./publish/client2'
                     } else if (env.BRANCH_NAME == 'branch3') {
@@ -57,7 +57,7 @@ pipeline {
         try {
             // Copy files to the remote server
             sh '''
-                scp -i $SSH_KEY -r /var/lib/jenkins/workspace/newPIpeline_branch1/bin/Release/net8.0/* admin@192.168.5.25:C:/CICDTest1/
+                scp -i $SSH_KEY -r /var/lib/jenkins/workspace/newPIpeline_branch1/bin/Release/net8.0/* admin@192.168.5.25:C:/CICDTest1
             '''
             // Restart the application pool
             sh '''
