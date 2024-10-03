@@ -48,56 +48,45 @@ pipeline {
         }
 
         stage('Deploy') {
-    steps {
-        script {
-            if (env.BRANCH_NAME == 'branch1') {
-                // Deploy to the remote IIS server for branch1
-                withCredentials([sshUserPrivateKey(credentialsId: 'e42c2480-89f9-4e15-a966-21bcc8ab478e', keyFileVariable: 'SSH_KEY')]) {
-                    try {
-                        // Stop IIS application pool or entire IIS if necessary
-                        // Stop IIS application pool or entire IIS if necessary
-                        sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-WebAppPool -Name news'"
-                        '''
-                        sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-IISSite -Name "news"'"
+            steps {
+                script {
+                    if (env.BRANCH_NAME == 'branch1') {
+                        // Deploy to the remote IIS server for branch1
+                        withCredentials([sshUserPrivateKey(credentialsId: 'e42c2480-89f9-4e15-a966-21bcc8ab478e', keyFileVariable: 'SSH_KEY')]) {
+                            try {
+                                // Stop the IIS site before copying files
+                                sh '''
+                                    ssh -i $SSH_KEY admin@192.168.5.25 "%systemroot%\\system32\\inetsrv\\appcmd stop site /site.name:\\"news\\""
+                                    ssh -i $SSH_KEY admin@192.168.5.25 "iisreset"
+                                '''
+                                
+                                // Copy files to the remote server (use rsync or scp)
+                                sh '''
+                                    scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/win-x64
+                                '''
+                                
+                                // Start the IIS site after copying files
+                                sh '''
+                                    ssh -i $SSH_KEY admin@192.168.5.25 "%systemroot%\\system32\\inetsrv\\appcmd start site /site.name:\\"news\\""
+                                    ssh -i $SSH_KEY admin@192.168.5.25 "iisreset"
+                                '''
 
-                        '''
-                        
-                        // Copy files to the remote server (use rsync for reliability)
-                        sh '''
-                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/win-x64
-
-                        '''
-                        
-                        // Restart IIS application pool after the files are copied
-                        sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-IISSite -Name "news" '"
-
-                        '''
-                        sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-WebAppPool -Name news'"
-                        '''
-
-                        
-                    } catch (Exception e) {
-                        // Handle errors
-                        echo "Deployment failed: ${e.message}"
-                        currentBuild.result = 'FAILURE'
+                            } catch (Exception e) {
+                                // Handle errors
+                                echo "Deployment failed: ${e.message}"
+                                currentBuild.result = 'FAILURE'
+                            }
+                        }
+                    } else if (env.BRANCH_NAME == 'branch2') {
+                        // Local Nginx server deployment for branch2
+                        sh 'sudo systemctl restart client2-app'
+                    } else if (env.BRANCH_NAME == 'branch3') {
+                        // Local Nginx server deployment for branch3
+                        sh 'sudo systemctl restart client3-app'
                     }
                 }
-            } else if (env.BRANCH_NAME == 'branch2') {
-                // Local Nginx server deployment for branch2
-                sh 'sudo systemctl restart client2-app'
-            } else if (env.BRANCH_NAME == 'branch3') {
-                // Local Nginx server deployment for branch3
-                sh 'sudo systemctl restart client3-app'
             }
         }
-    }
-}
-
-
     }
 
     post {
