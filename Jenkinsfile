@@ -54,23 +54,19 @@ pipeline {
                 // Deploy to the remote IIS server for branch1
                 withCredentials([sshUserPrivateKey(credentialsId: 'e42c2480-89f9-4e15-a966-21bcc8ab478e', keyFileVariable: 'SSH_KEY')]) {
                     try {
-                        // Stop IIS application pool to unlock the files
+                        // Stop IIS application pool or entire IIS if necessary
                         sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 << EOF
-                                powershell -Command "Stop-WebAppPool -Name 'news'"
-                            EOF
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-WebAppPool -Name news'"
                         '''
                         
-                        // Copy files to the remote server after stopping IIS
+                        // Copy files to the remote server (use rsync for reliability)
                         sh '''
-                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/win-x64
+                            rsync -avz --delete -e "ssh -i $SSH_KEY" /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/ admin@192.168.5.25:/C:/win-x64
                         '''
                         
                         // Restart IIS application pool after the files are copied
                         sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 << EOF
-                                powershell -Command "Start-WebAppPool -Name 'news'"
-                            EOF
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-WebAppPool -Name news'"
                         '''
                         
                     } catch (Exception e) {
@@ -87,6 +83,9 @@ pipeline {
                 sh 'sudo systemctl restart client3-app'
             }
         }
+    }
+}
+
     }
 }
 
