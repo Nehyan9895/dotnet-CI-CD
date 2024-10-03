@@ -57,19 +57,19 @@ pipeline {
                         // Stop IIS application pool to unlock the files
                         sh '''
                             ssh -i $SSH_KEY admin@192.168.5.25 << EOF
-                                powershell -Command "Stop-WebAppPool -Name 'new_app'"
+                                powershell -Command "Stop-WebAppPool -Name 'news'"
                             EOF
                         '''
                         
                         // Copy files to the remote server after stopping IIS
                         sh '''
-                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/win-x64
+                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/. admin@192.168.5.25:C:/win-x64
                         '''
                         
                         // Restart IIS application pool after the files are copied
                         sh '''
                             ssh -i $SSH_KEY admin@192.168.5.25 << EOF
-                                powershell -Command "Start-WebAppPool -Name 'new_app'"
+                                powershell -Command "Start-WebAppPool -Name 'news'"
                             EOF
                         '''
                         
