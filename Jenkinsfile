@@ -68,7 +68,6 @@ pipeline {
                                 // Start the IIS site after copying files
                                 sh '''
                                     ssh -i $SSH_KEY admin@192.168.5.25 "%systemroot%\\system32\\inetsrv\\appcmd start site /site.name:\\"news\\""
-                                    ssh -i $SSH_KEY admin@192.168.5.25 "iisreset"
                                 '''
 
                             } catch (Exception e) {
