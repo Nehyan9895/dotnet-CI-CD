@@ -56,7 +56,8 @@ pipeline {
                     try {
                         // Stop IIS application pool or entire IIS if necessary
                         sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-WebAppPool -Name news'"
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-Service W3SVC'"
+
                         '''
                         
                         // Copy files to the remote server (use rsync for reliability)
@@ -66,7 +67,8 @@ pipeline {
                         
                         // Restart IIS application pool after the files are copied
                         sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-WebAppPool -Name news'"
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-Service W3SVC'"
+
                         '''
                         
                     } catch (Exception e) {
