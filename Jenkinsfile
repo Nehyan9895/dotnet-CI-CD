@@ -57,10 +57,10 @@ pipeline {
                         // Stop IIS application pool or entire IIS if necessary
                         // Stop IIS application pool or entire IIS if necessary
                         sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-WebAppPool -Name 'news''"
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-WebAppPool -Name news'"
                         '''
                         sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-IISSite -Name "news"'"
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-IISSite -Name 'news''"
 
                         '''
                         
