@@ -56,7 +56,7 @@ pipeline {
                             try {
                                 // Copy files to the remote server
                                 sh '''
-                                    scp -i $SSH_KEY -r ./win-x64/ admin@192.168.5.25:C:/
+                                    scp -i $SSH_KEY -r /var/lib/jenkins/workspace/newPIpeline_branch1/bin/Release/net8.0/win-x64 admin@192.168.5.25:C:/
                                 '''
                                 // Restart the application pool
                                 sh '''
