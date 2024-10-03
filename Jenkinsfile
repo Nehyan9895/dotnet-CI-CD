@@ -61,7 +61,7 @@ pipeline {
                                 // Restart the application pool
                                 sh '''
                                     ssh -i $SSH_KEY admin@192.168.5.25 << EOF
-                                        powershell -Command "Restart-WebAppPool -Name 'CICDTest1'"
+                                        powershell -Command "Restart-WebAppPool -Name 'news'"
                                     EOF
                                 '''
                             } catch (Exception e) {
