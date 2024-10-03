@@ -48,39 +48,48 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
-                script {
-                    if (env.BRANCH_NAME == 'branch1') {
-                        // Deploy to the remote IIS server for branch1
-                        withCredentials([sshUserPrivateKey(credentialsId: 'e42c2480-89f9-4e15-a966-21bcc8ab478e', keyFileVariable: 'SSH_KEY')]) {
-                            try {
-                                // Copy files to the remote server
-                                sh '''
-                                    rsync -avz --delete -e "ssh -i $SSH_KEY" /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/ admin@192.168.5.25:/C://
-                                '''
-
-                                // Restart the application pool
-                                sh '''
-                                    ssh -i $SSH_KEY admin@192.168.5.25 << EOF
-                                        powershell -Command "Restart-WebAppPool -Name 'news'"
-                                    EOF
-                                '''
-                            } catch (Exception e) {
-                                // Handle errors
-                                echo "Deployment failed: ${e.message}"
-                                currentBuild.result = 'FAILURE'
-                            }
-                        }
-                    } else if (env.BRANCH_NAME == 'branch2') {
-                        // Local Nginx server deployment for branch2
-                        sh 'sudo systemctl restart client2-app'
-                    } else if (env.BRANCH_NAME == 'branch3') {
-                        // Local Nginx server deployment for branch3
-                        sh 'sudo systemctl restart client3-app'
+    steps {
+        script {
+            if (env.BRANCH_NAME == 'branch1') {
+                // Deploy to the remote IIS server for branch1
+                withCredentials([sshUserPrivateKey(credentialsId: 'e42c2480-89f9-4e15-a966-21bcc8ab478e', keyFileVariable: 'SSH_KEY')]) {
+                    try {
+                        // Stop IIS application pool to unlock the files
+                        sh '''
+                            ssh -i $SSH_KEY admin@192.168.5.25 << EOF
+                                powershell -Command "Stop-WebAppPool -Name 'news'"
+                            EOF
+                        '''
+                        
+                        // Copy files to the remote server after stopping IIS
+                        sh '''
+                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/CICDTest1
+                        '''
+                        
+                        // Restart IIS application pool after the files are copied
+                        sh '''
+                            ssh -i $SSH_KEY admin@192.168.5.25 << EOF
+                                powershell -Command "Start-WebAppPool -Name 'news'"
+                            EOF
+                        '''
+                        
+                    } catch (Exception e) {
+                        // Handle errors
+                        echo "Deployment failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
                     }
                 }
+            } else if (env.BRANCH_NAME == 'branch2') {
+                // Local Nginx server deployment for branch2
+                sh 'sudo systemctl restart client2-app'
+            } else if (env.BRANCH_NAME == 'branch3') {
+                // Local Nginx server deployment for branch3
+                sh 'sudo systemctl restart client3-app'
             }
         }
+    }
+}
+
     }
 
     post {
