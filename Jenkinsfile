@@ -55,6 +55,10 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'e42c2480-89f9-4e15-a966-21bcc8ab478e', keyFileVariable: 'SSH_KEY')]) {
                     try {
                         // Stop IIS application pool or entire IIS if necessary
+                        // Stop IIS application pool or entire IIS if necessary
+                        sh '''
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-WebAppPool -Name news'"
+                        '''
                         sh '''
                             ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Stop-Service W3SVC'"
 
@@ -71,6 +75,10 @@ pipeline {
                             ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-Service W3SVC'"
 
                         '''
+                        sh '''
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-WebAppPool -Name news'"
+                        '''
+
                         
                     } catch (Exception e) {
                         // Handle errors
