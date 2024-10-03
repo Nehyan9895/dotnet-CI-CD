@@ -72,7 +72,7 @@ pipeline {
                         
                         // Restart IIS application pool after the files are copied
                         sh '''
-                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-IISSite -Name "news"'"
+                            ssh -i $SSH_KEY admin@192.168.5.25 "powershell -Command 'Start-IISSite -Name "news" '"
 
                         '''
                         sh '''
