@@ -37,7 +37,7 @@ pipeline {
                 script {
                     // Publish based on the branch name
                     if (env.BRANCH_NAME == 'branch1') {
-                        sh 'dotnet publish --configuration Release --runtime win-x64 --self-contained true -o ./publish/client1'
+                        sh 'dotnet publish --configuration Release --runtime win-x64 --self-contained false'
                     } else if (env.BRANCH_NAME == 'branch2') {
                         sh 'dotnet publish --configuration Release -o ./publish/client2'
                     } else if (env.BRANCH_NAME == 'branch3') {
@@ -56,7 +56,7 @@ pipeline {
                             try {
                                 // Copy files to the remote server
                                 sh '''
-                                    scp -i $SSH_KEY -r ./publish/client1/ admin@192.168.5.25:C:/CICDTest1
+                                    scp -i $SSH_KEY -r ./win-x64/ admin@192.168.5.25:C:/
                                 '''
                                 // Restart the application pool
                                 sh '''

@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "gfpnlhw7mAM=",
+  "dgSpecHash": "NZVHEmojSUY=",
   "success": true,
   "projectFilePath": "/home/nehyan/Desktop/new-app/new-app.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/nehyan/.nuget/packages/microsoft.netcore.app.host.win-x64/8.0.8/microsoft.netcore.app.host.win-x64.8.0.8.nupkg.sha512"
+  ],
   "logs": []
 }

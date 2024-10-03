@@ -28,3 +28,4 @@
 /home/nehyan/Desktop/new-app/obj/Debug/net8.0/new-app.pdb
 /home/nehyan/Desktop/new-app/obj/Debug/net8.0/new-app.genruntimeconfig.cache
 /home/nehyan/Desktop/new-app/obj/Debug/net8.0/ref/new-app.dll
+/home/nehyan/Desktop/new-app/obj/Debug/net8.0/new-app.sourcelink.json
