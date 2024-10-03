@@ -63,7 +63,7 @@ pipeline {
                         
                         // Copy files to the remote server after stopping IIS
                         sh '''
-                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/CICDTest1
+                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/
                         '''
                         
                         // Restart IIS application pool after the files are copied
