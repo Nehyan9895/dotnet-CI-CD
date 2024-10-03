@@ -62,7 +62,7 @@ pipeline {
                         
                         // Copy files to the remote server (use rsync for reliability)
                         sh '''
-                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/. admin@192.168.5.25:C:/win-x64
+                            scp -i $SSH_KEY -r /var/lib/jenkins/workspace/multiBranch_pipeline_new_branch1/bin/Release/net8.0/win-x64/* admin@192.168.5.25:C:/win-x64
 
                         '''
                         
