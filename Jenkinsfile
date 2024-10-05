@@ -39,9 +39,9 @@ pipeline {
                     if (env.BRANCH_NAME == 'branch1') {
                         sh 'dotnet publish --configuration Release --runtime win-x64 --self-contained false'
                     } else if (env.BRANCH_NAME == 'branch2') {
-                        sh 'dotnet publish --configuration Release -o ./publish/client2'
+                        sh 'dotnet publish'
                     } else if (env.BRANCH_NAME == 'branch3') {
-                        sh 'dotnet publish --configuration Release -o ./publish/client3'
+                        sh 'dotnet publish'
                     }
                 }
             }
