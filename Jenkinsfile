@@ -39,7 +39,7 @@ pipeline {
                     if (env.BRANCH_NAME == 'branch1') {
                         sh 'dotnet publish --configuration Release -o ./publish/client1'
                     } else if (env.BRANCH_NAME == 'branch2') {
-                        sh 'dotnet publish --configuration Release -o ./publish/client2'
+                        sh 'dotnet publish'
                     } else if (env.BRANCH_NAME == 'branch3') {
                         sh 'dotnet publish --configuration Release -o ./publish/client3'
                     }
